@@ -13,6 +13,7 @@ app.post("/RiskManagementStart", async (req, res) => {
   let score = req.body.score;
   let clientName = req.body.clientName;
   let decision = req.body.decision;
+  // Simulating the central bank api with a random number to get the final score
   let finalScore = req.body.score * (Math.random() + 0.7);
 
   req.body.finalScore = finalScore;

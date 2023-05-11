@@ -2,19 +2,16 @@ const express = require("express");
 const multer = require("multer");
 const fs = require("fs");
 const { createWorker } = require("tesseract.js");
-const pdf2image = require("pdf2image");
-const gm = require("gm");
 const app = express();
-const filePath = "db.txt";
 const upload = multer({ dest: "uploads/images" });
 const axios = require("axios");
 
 app.post("/commercialService", upload.single("image"), async (req, res) => {
-  console.log("Pdf received and sent to OCR succesfully ");
+  console.log("Image successfully sent to the OCR for process");
+  const score = Math.random();
   try {
     const imagePath = req.file.path;
 
-    // Initialize Tesseract worker
     const worker = createWorker({
       logger: (m) => {},
     });
@@ -22,28 +19,42 @@ app.post("/commercialService", upload.single("image"), async (req, res) => {
     await worker.load();
     await worker.loadLanguage("eng");
     await worker.initialize("eng");
-    // Read text from image
+
     const { data } = await worker.recognize(imagePath);
     const extractedText = data.text;
+    console.log(extractedText);
 
-    // Clean up temporary file
     fs.unlinkSync(imagePath);
+    let accountId = Math.floor(10000 * Math.random(10000));
+    let clientName = extractedText.split(":")[1].split("\n")[0];
 
-    // Write extracted text to file
-    fs.appendFile("output.txt", extractedText, (err) => {
+    fs.appendFile("extractedText.txt", extractedText, (err) => {
       if (err) {
         console.error("An error occurred:", err);
       } else {
         console.log(
-          "Text extracted successfully and written to file: output.txt"
+          "Text extracted from image  and added to the file: extractedText.txt"
         );
       }
     });
-
-    return res.json({ text: extractedText });
+    let returnedData = axios.post(
+      "http://localhost:3000/CommercialServiceFinish",
+      {
+        accountId,
+        score,
+        clientName,
+        decision: score >= 0.5 ? "accepted" : "rejected",
+      }
+    );
+    console.log("Acknowledgment sent successfull to CenteralService");
+    return res.json({
+      accountId,
+      clientName,
+      decision: score >= 0.5 ? "accepted" : "rejected",
+    });
   } catch (error) {
     console.error(error);
-    res.status(500).send("Error occurred while processing the image file");
+    res.status(500).send("Error in processing image ");
   }
 });
 

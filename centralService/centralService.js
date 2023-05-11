@@ -28,9 +28,8 @@ app.post(
   upload.single("image"),
   app.post("/uploadimg", upload.single("image"), uploadImageController)
 );
-app.post("/CommercialServiceAcknowledgment", CommercialServiceController);
-app.post("/RiskManagementAcknowledgment", RiskManagementController);
-app.post("/CreditServiceAcknowledgment", CreditServiceController);
+app.post("/CommercialServiceFinish", CommercialServiceController);
+app.post("/RiskManagementFinish", RiskManagementController);
 
 // Server
 const port = 3000;

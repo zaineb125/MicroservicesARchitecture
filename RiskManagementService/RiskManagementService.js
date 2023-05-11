@@ -1,33 +1,33 @@
 const express = require("express");
 const fs = require("fs");
 const app = express();
-const filePath = "db.txt";
+const filePath = "../db.txt";
 const axios = require("axios");
 app.use(express.json());
 
-app.post("/RiskManagementNotify", async (req, res) => {
-  console.log("final score calculated! ");
-  console.log("client notified successfully");
-
-  let id = req.body.id;
-  let amount = req.body.amount;
+app.post("/RiskManagementStart", async (req, res) => {
+  console.log("Calculation of final score is done successfully! ");
+  console.log("Client notified successfully");
+  console.log(req.body);
+  let accountId = req.body.accountId;
   let score = req.body.score;
-  let name = req.body.name;
+  let clientName = req.body.clientName;
+  let decision = req.body.decision;
   let finalScore = req.body.score * (Math.random() + 0.7);
 
   req.body.finalScore = finalScore;
 
   try {
     let ans = axios.post(
-      "http://localhost:3000/RiskManagementAcknowledgment",
+      "http://localhost:3000/RiskManagementFinish",
       req.body
     );
   } catch (e) {
     console.log(e);
   }
-  console.log("acknowledgment sent successfull to CentralService");
+  console.log("Acknowledgment sent successfull to CentralService");
 
-  values = [id, amount, score, name, score, finalScore];
+  values = [accountId, clientName, score, finalScore, decision];
 
   fs.appendFile(filePath, "\n" + values.join(","), (err) => {
     if (err) {

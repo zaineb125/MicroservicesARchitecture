@@ -3,14 +3,13 @@ const FormData = require("form-data");
 const CommercialServiceController = async (req, res) => {
   let o = {
     id: req.body.id,
-    amount: req.body.amount,
     score: req.body.score,
     name: req.body.name,
   };
   try {
-    console.log("request sent to Risk management Service ");
+    console.log("request sent to Risk management Service successfully ");
     let ans = await axios.post(
-      "http://localhost:3002/RiskManagementNotify",
+      "http://localhost:3002/RiskManagementStart",
       req.body
     );
   } catch (e) {
@@ -23,8 +22,8 @@ const CommercialServiceController = async (req, res) => {
 };
 
 const RiskManagementController = async (req, res) => {
-  console.log("RiskManagement Acknowledgment received successfully");
-  console.log("request sent to Credit Service successfully");
+  console.log("The RiskManagement recieved the Acknowledgment successfully");
+  console.log("Request sent to Credit Service successfully");
 
   if (req.body.finalScore >= 0.4) {
     try {
@@ -37,11 +36,8 @@ const RiskManagementController = async (req, res) => {
     }
     res.json({ body: req.body });
   } else {
-    console.log("client rejected");
+    console.log("Credit request rejected");
   }
-};
-const CreditServiceController = async (req, res) => {
-  console.log("CreditService Acknowledgment received successfully");
 };
 
 const uploadImageController = async (req, res) => {
@@ -69,7 +65,6 @@ const uploadImageController = async (req, res) => {
 
 module.exports = {
   CommercialServiceController,
-  CreditServiceController,
   RiskManagementController,
   uploadImageController,
 };
